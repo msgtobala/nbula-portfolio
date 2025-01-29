@@ -75,7 +75,7 @@ export default function Careers() {
     }
 
     if (filters.department) {
-      filtered = filtered.filter(job => job.department === filters.department);
+      filtered = filtered.filter(job => job.department.value === filters.department);
     }
 
     if (filters.skills.length > 0) {

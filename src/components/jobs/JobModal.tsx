@@ -22,7 +22,7 @@ export default function JobModal({ job, onClose }: JobModalProps) {
               </div>
               <div className="flex items-center gap-1">
                 <Building2 size={16} />
-                <span>{job.department}</span>
+                <span>{job.department.label}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Calendar size={16} />
