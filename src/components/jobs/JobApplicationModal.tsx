@@ -18,8 +18,7 @@ export default function JobApplicationModal({ jobTitle, jobId, onClose }: JobApp
     experience: '',
     currentCompany: '',
     noticePeriod: '',
-    resumeUrl: '',
-    coverLetter: ''
+    resumeUrl: ''
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -179,19 +178,6 @@ export default function JobApplicationModal({ jobTitle, jobId, onClose }: JobApp
                 }}
               />
             </div>
-          </div>
-
-          {/* Cover Letter */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-light-100">Cover Letter</h3>
-            <textarea
-              id="coverLetter"
-              rows={4}
-              value={formData.coverLetter}
-              onChange={(e) => setFormData(prev => ({ ...prev, coverLetter: e.target.value }))}
-              placeholder="Tell us why you're interested in this position..."
-              className="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 text-light-100 focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
           </div>
 
           {/* Submit Button */}
