@@ -6,6 +6,7 @@ import { ArrowLeft, MapPin, Calendar, Building2, Briefcase, IndianRupee, Users, 
 import { db } from '../../lib/firebase';
 import { Job } from '../../types/job';
 import GradientText from '../ui/GradientText';
+import JobApplicationModal from '../jobs/JobApplicationModal';
 
 const formatIndianRupees = (amount: number) => {
   const formatter = new Intl.NumberFormat('en-IN', {
@@ -20,6 +21,7 @@ export default function JobDetail() {
   const { id } = useParams();
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showApplicationModal, setShowApplicationModal] = useState(false);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -171,10 +173,22 @@ export default function JobDetail() {
           <p className="text-light-200 mb-6">
             We're looking for passionate individuals to join our team.
           </p>
-          <button className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg font-medium transition-colors">
+          <button 
+            onClick={() => setShowApplicationModal(true)}
+            className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+          >
             Apply Now
           </button>
         </div>
+
+        {/* Application Modal */}
+        {showApplicationModal && (
+          <JobApplicationModal
+            jobTitle={job.title}
+            jobId={job.id}
+            onClose={() => setShowApplicationModal(false)}
+          />
+        )}
       </div>
     </div>
   );
