@@ -3,6 +3,11 @@ export interface Department {
   value: string;
 }
 
+export interface InterviewType {
+  label: string;
+  value: string;
+}
+
 export interface Job {
   id: string;
   title: string;
@@ -13,7 +18,7 @@ export interface Job {
   department: Department;
   salary: number;
   skills: string[];
-  interviewType: 'Online' | 'Offline' | 'Hybrid';
+  interviewType: InterviewType;
   isActive: boolean;
   isActivelyHiring: boolean;
 }

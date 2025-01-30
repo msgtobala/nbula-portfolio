@@ -1,6 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { MapPin, Calendar, Building2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Job } from '../../types/job';
 
 interface JobCardProps {
@@ -10,9 +11,9 @@ interface JobCardProps {
 
 export default function JobCard({ job, onClick }: JobCardProps) {
   return (
-    <div 
-      className="bg-dark-700/50 rounded-lg p-6 hover:bg-dark-700/70 transition-all cursor-pointer"
-      onClick={onClick}
+    <Link 
+      to={`/careers/${job.id}`}
+      className="block bg-dark-700/50 rounded-lg p-6 hover:bg-dark-700/70 transition-all"
     >
       <div className="flex justify-between items-start mb-4">
         <div>
@@ -63,6 +64,6 @@ export default function JobCard({ job, onClick }: JobCardProps) {
           </span>
         )}
       </div>
-    </div>
+    </Link>
   );
 }

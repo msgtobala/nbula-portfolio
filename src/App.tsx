@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import DigitalTransformation from './components/pages/DigitalTransformation';
 import TalentSolutions from './components/pages/TalentSolutions';
 import Careers from './components/pages/Careers';
+import JobDetail from './components/pages/JobDetail';
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="/digital-transformation" element={<DigitalTransformation />} />
             <Route path="/talent-solutions" element={<TalentSolutions />} />
             <Route path="/careers" element={<Careers />} />
+            <Route path="/careers/:id" element={<JobDetail />} />
           </Routes>
           <Footer />
         </div>
