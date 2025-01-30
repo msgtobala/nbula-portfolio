@@ -1,34 +1,39 @@
 import React from 'react';
 import { SortOption } from '../../types/job';
+import Dropdown from '../ui/Dropdown';
 
 interface JobSortProps {
   value: SortOption;
   onChange: (value: SortOption) => void;
 }
 
+const sortOptions = [
+  { label: 'Newest First', value: 'datePosted-desc' },
+  { label: 'Oldest First', value: 'datePosted-asc' },
+  { label: 'Title (A-Z)', value: 'title-asc' },
+  { label: 'Title (Z-A)', value: 'title-desc' },
+  { label: 'Salary (High-Low)', value: 'salary-desc' },
+  { label: 'Salary (Low-High)', value: 'salary-asc' },
+  { label: 'Experience (High-Low)', value: 'experience-desc' },
+  { label: 'Experience (Low-High)', value: 'experience-asc' },
+];
+
 export default function JobSort({ value, onChange }: JobSortProps) {
   return (
     <div className="flex gap-2">
-      <select
+      <Dropdown
         value={`${value.field}-${value.direction}`}
-        onChange={(e) => {
-          const [field, direction] = e.target.value.split('-');
+        onChange={(selectedValue) => {
+          const [field, direction] = selectedValue.split('-');
           onChange({ 
             field: field as SortOption['field'], 
             direction: direction as 'asc' | 'desc' 
           });
         }}
-        className="bg-dark-700/50 border border-dark-700 rounded-lg px-3 py-2 text-light-100 focus:ring-2 focus:ring-primary focus:border-transparent"
-      >
-        <option value="datePosted-desc">Newest First</option>
-        <option value="datePosted-asc">Oldest First</option>
-        <option value="title-asc">Title (A-Z)</option>
-        <option value="title-desc">Title (Z-A)</option>
-        <option value="salary-desc">Salary (High-Low)</option>
-        <option value="salary-asc">Salary (Low-High)</option>
-        <option value="experience-desc">Experience (High-Low)</option>
-        <option value="experience-asc">Experience (Low-High)</option>
-      </select>
+        options={sortOptions}
+        placeholder="Sort by"
+        className="w-48"
+      />
     </div>
   );
 }

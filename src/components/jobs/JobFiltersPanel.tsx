@@ -1,21 +1,35 @@
 import React from 'react';
 import { JobFilters } from '../../types/job';
+import Dropdown from '../ui/Dropdown';
+import Checkbox from '../ui/Checkbox';
 
 interface JobFiltersPanelProps {
   filters: JobFilters;
   setFilters: React.Dispatch<React.SetStateAction<JobFilters>>;
 }
 
-export default function JobFiltersPanel({ filters, setFilters }: JobFiltersPanelProps) {
-  const handleSkillChange = (skill: string) => {
-    setFilters(prev => ({
-      ...prev,
-      skills: prev.skills.includes(skill)
-        ? prev.skills.filter(s => s !== skill)
-        : [...prev.skills, skill]
-    }));
-  };
+const departmentOptions = [
+  { label: 'All Departments', value: '' },
+  { label: 'Engineering', value: 'Engineering' },
+  { label: 'Design', value: 'Design' },
+  { label: 'Product', value: 'Product' },
+  { label: 'Marketing', value: 'Marketing' },
+  { label: 'Sales', value: 'Sales' },
+  { label: 'Customer Support', value: 'Customer Support' },
+  { label: 'Human Resources', value: 'Human Resources' },
+  { label: 'Finance', value: 'Finance' },
+  { label: 'Operations', value: 'Operations' },
+  { label: 'Legal', value: 'Legal' }
+];
 
+const interviewTypeOptions = [
+  { label: 'All Types', value: '' },
+  { label: 'Online', value: 'Online' },
+  { label: 'Offline', value: 'Offline' },
+  { label: 'Hybrid', value: 'Hybrid' },
+];
+
+export default function JobFiltersPanel({ filters, setFilters }: JobFiltersPanelProps) {
   return (
     <div className="bg-dark-700/50 rounded-lg p-6">
       <h3 className="text-lg font-semibold text-light-100 mb-4">Filters</h3>
@@ -39,18 +53,12 @@ export default function JobFiltersPanel({ filters, setFilters }: JobFiltersPanel
         <label className="block text-light-200 text-sm font-medium mb-2">
           Department
         </label>
-        <select
+        <Dropdown
           value={filters.department}
-          onChange={(e) => setFilters(prev => ({ ...prev, department: e.target.value }))}
-          className="w-full bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 text-light-100 focus:ring-2 focus:ring-primary focus:border-transparent"
-        >
-          <option value="">All Departments</option>
-          <option value="Engineering">Engineering</option>
-          <option value="Design">Design</option>
-          <option value="Marketing">Marketing</option>
-          <option value="Sales">Sales</option>
-          <option value="HR">HR</option>
-        </select>
+          onChange={(value) => setFilters(prev => ({ ...prev, department: value }))}
+          options={departmentOptions}
+          placeholder="All Departments"
+        />
       </div>
 
       {/* Interview Type Filter */}
@@ -58,16 +66,12 @@ export default function JobFiltersPanel({ filters, setFilters }: JobFiltersPanel
         <label className="block text-light-200 text-sm font-medium mb-2">
           Interview Type
         </label>
-        <select
+        <Dropdown
           value={filters.interviewType}
-          onChange={(e) => setFilters(prev => ({ ...prev, interviewType: e.target.value }))}
-          className="w-full bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 text-light-100 focus:ring-2 focus:ring-primary focus:border-transparent"
-        >
-          <option value="">All Types</option>
-          <option value="Online">Online</option>
-          <option value="Offline">Offline</option>
-          <option value="Hybrid">Hybrid</option>
-        </select>
+          onChange={(value) => setFilters(prev => ({ ...prev, interviewType: value }))}
+          options={interviewTypeOptions}
+          placeholder="All Types"
+        />
       </div>
 
       {/* Active/Hiring Status Filters */}
@@ -75,31 +79,15 @@ export default function JobFiltersPanel({ filters, setFilters }: JobFiltersPanel
         <label className="block text-light-200 text-sm font-medium mb-2">
           Status
         </label>
-        <div className="space-y-2">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={filters.isActive === true}
-              onChange={(e) => setFilters(prev => ({ 
-                ...prev, 
-                isActive: e.target.checked ? true : null 
-              }))}
-              className="rounded border-dark-700 text-primary focus:ring-primary"
-            />
-            <span className="ml-2 text-light-200">Active Jobs Only</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={filters.isActivelyHiring === true}
-              onChange={(e) => setFilters(prev => ({ 
-                ...prev, 
-                isActivelyHiring: e.target.checked ? true : null 
-              }))}
-              className="rounded border-dark-700 text-primary focus:ring-primary"
-            />
-            <span className="ml-2 text-light-200">Actively Hiring</span>
-          </label>
+        <div className="space-y-3">
+          <Checkbox
+            checked={filters.isActivelyHiring === true}
+            onChange={(checked) => setFilters(prev => ({ 
+              ...prev, 
+              isActivelyHiring: checked ? true : null 
+            }))}
+            label="Actively Hiring"
+          />
         </div>
       </div>
 
