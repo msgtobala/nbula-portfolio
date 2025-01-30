@@ -1,13 +1,3 @@
-export interface Department {
-  label: string;
-  value: string;
-}
-
-export interface InterviewType {
-  label: string;
-  value: string;
-}
-
 export interface Job {
   id: string;
   title: string;
@@ -15,25 +5,30 @@ export interface Job {
   location: string;
   description: string;
   datePosted: Date;
-  department: Department;
+  department: string;
   salary: number;
   skills: string[];
-  interviewType: InterviewType;
+  interviewType: string;
   isActive: boolean;
   isActivelyHiring: boolean;
 }
 
-export interface JobFilters {
-  search: string;
-  location: string;
-  department: string;
-  skills: string[];
-  interviewType: string;
-  isActive: boolean | null;
-  isActivelyHiring: boolean | null;
-}
+export const departments = [
+  'Engineering',
+  'Design',
+  'Product',
+  'Marketing',
+  'Sales',
+  'Customer Support',
+  'Human Resources',
+  'Finance',
+  'Operations',
+  'Legal'
+] as const;
 
-export interface SortOption {
-  field: keyof Job;
-  direction: 'asc' | 'desc';
+export type Department = typeof departments[number];
+
+export interface SkillOption {
+  value: string;
+  label: string;
 }
