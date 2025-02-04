@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { X, Upload, Loader2 } from 'lucide-react';
 import { useToast } from '../../hooks/useToast';
+import { uploadResume, submitApplication } from '../../utils/applications';
+import type { JobApplication } from '../../types/application';
 
 interface JobApplicationModalProps {
   jobTitle: string;
@@ -10,6 +12,7 @@ interface JobApplicationModalProps {
 
 export default function JobApplicationModal({ jobTitle, jobId, onClose }: JobApplicationModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { showToast } = useToast();
   const [formData, setFormData] = useState({
     fullName: '',
@@ -18,20 +21,58 @@ export default function JobApplicationModal({ jobTitle, jobId, onClose }: JobApp
     experience: '',
     currentCompany: '',
     noticePeriod: '',
-    resumeUrl: ''
   });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!validTypes.includes(file.type)) {
+        showToast('Please upload a PDF or Word document', 'error');
+        return;
+      }
+      
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('File size should be less than 5MB', 'error');
+        return;
+      }
+      
+      setSelectedFile(file);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    if (!selectedFile) {
+      showToast('Please upload your resume', 'error');
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
-      // TODO: Implement application submission logic
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulated delay
+      // Upload resume to Firebase Storage
+      const resumeUrl = await uploadResume(selectedFile, jobTitle);
+      
+      // Submit application to Firestore with saveForLater defaulting to false
+      await submitApplication({
+        ...formData,
+        resumeUrl,
+        jobId,
+        jobTitle,
+      }, false);
+      
       showToast('Application submitted successfully!', 'success');
       onClose();
     } catch (error) {
-      showToast('Failed to submit application. Please try again.', 'error');
+      if (error instanceof Error) {
+        showToast(error.message, 'error');
+      } else {
+        showToast('Failed to submit application. Please try again.', 'error');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -154,11 +195,15 @@ export default function JobApplicationModal({ jobTitle, jobId, onClose }: JobApp
             <div className="relative">
               <label
                 htmlFor="resumeUpload"
-                className="block w-full border-2 border-dashed border-dark-600 rounded-lg p-4 text-center cursor-pointer hover:border-primary transition-colors"
+                className={`block w-full border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors ${
+                  selectedFile 
+                    ? 'border-primary bg-primary/10' 
+                    : 'border-dark-600 hover:border-primary'
+                }`}
               >
                 <Upload className="mx-auto h-12 w-12 text-light-200" />
                 <span className="mt-2 block text-sm font-medium text-light-200">
-                  Click to upload your resume
+                  {selectedFile ? selectedFile.name : 'Click to upload your resume'}
                 </span>
                 <span className="mt-1 block text-xs text-light-200">
                   PDF, DOC, DOCX up to 5MB
@@ -169,13 +214,7 @@ export default function JobApplicationModal({ jobTitle, jobId, onClose }: JobApp
                 type="file"
                 className="hidden"
                 accept=".pdf,.doc,.docx"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    // TODO: Implement file upload logic
-                    setFormData(prev => ({ ...prev, resumeUrl: 'uploaded' }));
-                  }
-                }}
+                onChange={handleFileChange}
               />
             </div>
           </div>
@@ -184,7 +223,7 @@ export default function JobApplicationModal({ jobTitle, jobId, onClose }: JobApp
           <div className="flex justify-end pt-4">
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !selectedFile}
               className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
             >
               {isSubmitting ? (
