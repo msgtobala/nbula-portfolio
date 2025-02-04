@@ -67,11 +67,9 @@ export default function Careers() {
       );
     }
 
-    // Apply other filters
+    // Apply location filter
     if (filters.location) {
-      filtered = filtered.filter(job => 
-        job.location.toLowerCase().includes(filters.location.toLowerCase())
-      );
+      filtered = filtered.filter(job => job.location === filters.location);
     }
 
     if (filters.department) {
@@ -129,6 +127,7 @@ export default function Careers() {
             <JobFiltersPanel
               filters={filters}
               setFilters={setFilters}
+              jobs={jobs}
             />
           </div>
 

@@ -1,11 +1,12 @@
-import React from 'react';
-import { JobFilters } from '../../types/job';
+import React, { useMemo } from 'react';
+import { JobFilters, Job } from '../../types/job';
 import Dropdown from '../ui/Dropdown';
 import Checkbox from '../ui/Checkbox';
 
 interface JobFiltersPanelProps {
   filters: JobFilters;
   setFilters: React.Dispatch<React.SetStateAction<JobFilters>>;
+  jobs: Job[];
 }
 
 const departmentOptions = [
@@ -29,7 +30,21 @@ const interviewTypeOptions = [
   { label: 'Hybrid', value: 'Hybrid' },
 ];
 
-export default function JobFiltersPanel({ filters, setFilters }: JobFiltersPanelProps) {
+export default function JobFiltersPanel({ filters, setFilters, jobs }: JobFiltersPanelProps) {
+  // Generate location options dynamically from available jobs
+  const locationOptions = useMemo(() => {
+    const uniqueLocations = Array.from(new Set(jobs.map(job => job.location)))
+      .sort((a, b) => a.localeCompare(b));
+
+    return [
+      { label: 'All Locations', value: '' },
+      ...uniqueLocations.map(location => ({
+        label: location,
+        value: location
+      }))
+    ];
+  }, [jobs]);
+
   return (
     <div className="bg-dark-700/50 rounded-lg p-6">
       <h3 className="text-lg font-semibold text-light-100 mb-4">Filters</h3>
@@ -39,12 +54,11 @@ export default function JobFiltersPanel({ filters, setFilters }: JobFiltersPanel
         <label className="block text-light-200 text-sm font-medium mb-2">
           Location
         </label>
-        <input
-          type="text"
+        <Dropdown
           value={filters.location}
-          onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
-          className="w-full bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 text-light-100 focus:ring-2 focus:ring-primary focus:border-transparent"
-          placeholder="Filter by location"
+          onChange={(value) => setFilters(prev => ({ ...prev, location: value }))}
+          options={locationOptions}
+          placeholder="All Locations"
         />
       </div>
 
